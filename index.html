@@ -9,20 +9,22 @@
 </head>
 
 <body class="body">
-    <header class="header">
-        <nav class="nav">
-            <ul class="nav__link">
-                <li class="nav__link--item"><img class="nav__link--item-img" src="img\logo.png" alt=""></li>
-                <li class="nav__link--item"><img class="nav__link--item-img newGame" src="img\pngegg.png" alt=""></li>
-            </ul>
-        </nav>
-    </header>
     <div class="container">
-        <div class="message"></div>
-        <div class="board"></div>
-        <div class="points"></div>
+        <header class="header">
+            <nav class="nav">
+                <ul class="nav__link">
+                    <li class="nav__link--item"><img class="nav__link--item-img" src="img\logo.png" alt=""></li>
+                    <li class="nav__link--item"><img class="nav__link--item-img newGame" src="img\pngegg.png" alt=""></li>
+                </ul>
+            </nav>
+        </header>
+        <div class="gameBox">
+            <div class="message"></div>
+            <div class="board"></div>
+            <div class="points"></div>
+        </div>
+        <div class="wrong_points">Wrong answers: <span id="wrong_ans">0</span></div>
     </div>
-    <div class="wrong_points">Wrong answers: <span id="wrong_ans">0</span></div>
 
     <script src="script.js"></script>
 </body>

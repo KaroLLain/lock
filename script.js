@@ -9,7 +9,7 @@ class App {
 	//Setting variables
 	waterDrop = 'img/water-drop-575495_1280.png';
 	rows = 4;
-	cols = 6;
+	cols = 4;
 	computerChoice = new Array(this.rows);
 	currentLevel = 0;
 	wrongAns = 0;
