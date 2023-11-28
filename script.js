@@ -1,91 +1,121 @@
 'use strict';
 
-const btnNewGame = document.querySelector('.newGame');
-const boardContainer = document.querySelector('.board');
-const imga1 = document.querySelector('.imga1');
-const imga2 = document.querySelector('.imga2');
-const imga3 = document.querySelector('.imga3');
-const imga4 = document.querySelector('.imga4');
-const imga = document.querySelector('.imga');
+const newGameBtn = document.querySelector('.newGame');
+const board = document.querySelector('.board');
+const wrong_points = document.getElementById('wrong_ans');
 
-const createDots = function() {
-    for(let i = 0; i < 16; i++) {
-        const img = document.createElement('img');
-        img.src = `img\\water-drop-575495_1280.png`;
-        const src = document.querySelector('.board');
-        src.appendChild(img);
-        img.className = `imga imga${i + 1}`;
-        img.dataset.img = i + 1;
-        //src.insertAdjacentHTML(`data-img="${i + 1}"`);
-    }; 
+class App {
+
+	//Setting variables
+	waterDrop = 'img/water-drop-575495_1280.png';
+	rows = 4;
+	cols = 6;
+	computerChoice = new Array(this.rows);
+	currentLevel = 0;
+	wrongAns = 0;
+
+	constructor() {
+
+		//Setting app
+		this._createBoard();
+		this._playerSelect.bind(this);
+	 	this._rebuildDots();
+		this._init.bind(this);
+		this._computerChoice();
+
+		//Attaching event handlers
+		newGameBtn.addEventListener('click', this._init.bind(this));
+
+	};
+
+	//Functionality
+	_init() {
+		//Reseting level
+		this.currentLevel = 0;
+
+		//Removing classes
+		const boardAll = document.querySelectorAll(".drop");
+		for(let el of boardAll) {
+			el.classList.remove('active');
+			el.classList.remove('correct');
+			el.classList.remove('incorrect');
+		};
+
+		//Generating new 4 random numbrs
+		this._computerChoice();
+
+		//Adding class to first bubble
+		const startingRow = document.querySelectorAll("[data-level='0']");
+		console.log(this.currentLevel);
+		for(let el of startingRow) {
+			if(parseInt(el.dataset.option) === this.computerChoice[0]) el.classList.add('correct');	
+		};
+
+	};
+
+	_computerChoice() {
+		for(let y = 0; y < this.rows; y++){	
+			this.computerChoice[y] = Math.floor(Math.random() * this.cols);
+		};
+		console.log(this.computerChoice);
+	};
+
+	_createBoard() {
+		board.style['grid-template-columns'] = `repeat(${this.cols}, 1fr)`;
+		for(let y = 0; y < this.rows; y++){
+			for(let x = 0; x < this.cols; x++){
+				let img = document.createElement('img');
+				img.src = this.waterDrop;
+				img.setAttribute('data-option', `${x}`);
+				img.setAttribute('data-level', `${y}`);
+				img.classList.add('drop');
+				img.addEventListener('click', this._playerSelect.bind(this));
+				if(y === this.currentLevel){
+					img.classList.add('active');
+				}
+				board.appendChild(img);
+			};	
+			//this.computerChoice[y] = Math.floor(Math.random() * this.cols);
+		};	
+		//console.log(this.computerChoice);
+		
+	};
+
+	_playerSelect(e) {
+		let img = e.target;
+		let level = parseInt(img.dataset.level);
+		let playerChoice = parseInt(img.dataset.option);
+		
+		if(level === this.currentLevel){
+			if(playerChoice === this.computerChoice[this.currentLevel]){
+				img.classList.add('correct');
+				this.currentLevel += 1;
+				this._rebuildDots(this.currentLevel);
+			} else {
+				img.classList.add('incorrect');
+				img.classList.remove('active');
+				this.wrongAns += 1;
+				wrong_points.innerText = this.wrongAns;
+			};
+		};
+	};
+
+	_rebuildDots(c_level){
+		let imgs = document.querySelectorAll('.board > img');
+		imgs.forEach((img) => {
+			if(parseInt(img.dataset.level) === c_level){
+				img.classList.add('active');
+				console.log(img.dataset.level);
+			} else {
+				img.classList.remove('active');
+			};
+		});
+	};
 };
-createDots();
-//setTimeout(() => {createDots();}, "4000");
+
+new App();
 
 
-//Starting new game
-
-const init = function() {
-    let dots = document.querySelectorAll('.imga');
-    for(let dot of dots) {
-        dot.classList.remove('start');
-    };
-};
-
-btnNewGame.addEventListener('click', (e) => {
-    //tabsContent.forEach(t => t.classList.remove('operations__tab--active'));
-    init();
-    startingGame();
-});
-
-const randomNumbers = function() {
-    let randomRow2 = Math.floor(Math.random() * (8 - 5) + 5);
-    let randomRow3 = Math.floor(Math.random() * (12 - 9) + 9);
-    let randomRow4 = Math.floor(Math.random() * (16 - 13) + 13);
-
-    console.log(randomRow2, randomRow3, randomRow4);
-};
-randomNumbers();
-
-const startingGame = function(e) {
-    let randomRow1 = Math.ceil(Math.random() * 4);
-    console.log(randomRow1);
-    document.querySelector(`.imga${randomRow1}`).classList.add('start');    
-};
-
-// const activateDots = function() {
-//     document.querySelectorAll('.imga').forEach(dot => dot.classList.remove('active'));
-//     document.querySelector(`.imga[data-img="${img}"]`).classList.add('active');
-// }
-
-boardContainer.addEventListener('click', function(e) {
-    let n = 0;
-    if(e.target.classList.contains('start') && e.target.classList.contains('imga1')) {
-    console.log(e.target);
-    document.querySelector(`.imga${5}`).classList.add('start'); 
-    document.querySelector(`.imga${6}`).classList.add('start'); 
-
-    let randomRow2 = Math.floor(Math.random() * (8 - 5) + 5);
-    console.log(randomRow2);
-        
-    //document.querySelector(`.imga${randomRow2}`).classList.add('start'); 
-    } else if(e.target.classList.contains('start') && e.target.classList.contains('imga2')) {
-        console.log(e.target);
-        document.querySelector(`.imga${5}`).classList.add('start'); 
-        document.querySelector(`.imga${6}`).classList.add('start'); 
-        document.querySelector(`.imga${7}`).classList.add('start'); 
-    } else if(e.target.classList.contains('start') && e.target.classList.contains('imga3')) {
-        console.log(e.target);
-        document.querySelector(`.imga${6}`).classList.add('start'); 
-        document.querySelector(`.imga${7}`).classList.add('start'); 
-        document.querySelector(`.imga${8}`).classList.add('start'); 
-    } else if(e.target.classList.contains('start') && e.target.classList.contains('imga4')) {
-        console.log(e.target);
-        document.querySelector(`.imga${7}`).classList.add('start'); 
-        document.querySelector(`.imga${8}`).classList.add('start'); 
-    }
-    
- });
 
 
 
