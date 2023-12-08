@@ -3,14 +3,16 @@
 const newGameBtn = document.querySelector('.newGame');
 const board = document.querySelector('.board');
 const wrong_points = document.getElementById('wrong_ans');
+const imgs = document.querySelectorAll('.img');
 
 class App {
 
 	//Setting variables
 	waterDrop = 'img/water-drop-575495_1280.png';
 	rows = 3;
-	cols = 3;
+	cols = 4;
 	computerChoice = new Array(this.rows);
+	hintNumbers = new Array(this.cols);
 	currentLevel = 0;
 	wrongAns = 0;
 
@@ -22,10 +24,10 @@ class App {
 	 	this._rebuildDots();
 		this._init.bind(this);
 		this._computerChoice();
+		this._computedHint.bind(this);
 
 		//Attaching event handlers
 		newGameBtn.addEventListener('click', this._init.bind(this));
-
 	};
 
 	//Functionality
@@ -46,7 +48,6 @@ class App {
 
 		//Adding class to first bubble
 		const startingRow = document.querySelectorAll("[data-level='0']");
-		console.log(this.currentLevel);
 		for(let el of startingRow) {
 			if(parseInt(el.dataset.option) === this.computerChoice[0]) el.classList.add('correct');	
 		};
@@ -58,6 +59,29 @@ class App {
 			this.computerChoice[y] = Math.floor(Math.random() * this.cols);
 		};
 		console.log(this.computerChoice);
+	};
+
+	_computedHint() {
+		this.hintNumbers = this.hintNumbers
+					.fill('enything')
+					.map( (_, i) => {
+						if (i !== this.computerChoice[this.currentLevel])
+						return i;
+					} )
+					.with(1, this.computerChoice[this.currentLevel])
+					.sort(() => Math.random() - 0.5)
+					.slice(0, -1);	
+
+					let hint = document.querySelectorAll("[data-option]");
+					for (let el of hint) {
+						if(parseInt(el.dataset.option) === this.hintNumbers) {
+							console.log(el.dataset.option);
+						}
+			
+					}
+			
+					
+		console.log(this.hintNumbers);
 	};
 
 	_createBoard() {
@@ -76,21 +100,19 @@ class App {
 				board.appendChild(img);
 			};	
 			//this.computerChoice[y] = Math.floor(Math.random() * this.cols);
-		};	
-		//console.log(this.computerChoice);
-		
+		};			
 	};
 
 	_playerSelect(e) {
 		let img = e.target;
 		let level = parseInt(img.dataset.level);
 		let playerChoice = parseInt(img.dataset.option);
-		
 		if(level === this.currentLevel){
 			if(playerChoice === this.computerChoice[this.currentLevel]){
 				img.classList.add('correct');
 				this.currentLevel += 1;
 				this._rebuildDots(this.currentLevel);
+				this._computedHint();
 			} else {
 				img.classList.add('incorrect');
 				img.classList.remove('active');
@@ -100,16 +122,17 @@ class App {
 		};
 	};
 
-	_rebuildDots(c_level){
-		let imgs = document.querySelectorAll('.board > img');
+
+
+	_rebuildDots(currentLevel){
 		imgs.forEach((img) => {
-			if(parseInt(img.dataset.level) === c_level){
+			if(parseInt(img.dataset.level) === currentLevel){
 				img.classList.add('active');
-				console.log(img.dataset.level);
 			} else {
 				img.classList.remove('active');
 			};
 		});
+		
 	};
 };
 
